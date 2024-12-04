@@ -1,53 +1,82 @@
+import { vesterList } from "./../ponder.schema";
 import { ponder } from "@/generated";
-import {
-  account,
-  allowance,
-  approvalEvent,
-  transferEvent,
-} from "../ponder.schema";
+import { account } from "../ponder.schema";
 
-ponder.on("ERC20:Transfer", async ({ event, context }) => {
+ponder.on("BFR:Transfer", async ({ event, context }) => {
   await context.db
     .insert(account)
-    .values({ address: event.args.from, balance: 0n, isOwner: false })
+    .values({ address: event.args.from, bfrAamount: 0n, esBFRAamount: 0n })
     .onConflictDoUpdate((row) => ({
-      balance: row.balance - event.args.amount,
+      bfrAamount: row.bfrAamount - event.args.amount,
     }));
 
   await context.db
     .insert(account)
-    .values({ address: event.args.to, balance: 0n, isOwner: false })
+    .values({ address: event.args.to, bfrAamount: 0n, esBFRAamount: 0n })
     .onConflictDoUpdate((row) => ({
-      balance: row.balance + event.args.amount,
+      bfrAamount: row.bfrAamount + event.args.amount,
     }));
-
-  // add row to "transfer_event".
-  await context.db.insert(transferEvent).values({
-    id: event.log.id,
-    amount: event.args.amount,
-    timestamp: Number(event.block.timestamp),
-    from: event.args.from,
-    to: event.args.to,
-  });
 });
-
-ponder.on("ERC20:Approval", async ({ event, context }) => {
-  // upsert "allowance".
+ponder.on("esBFR:Transfer", async ({ event, context }) => {
   await context.db
-    .insert(allowance)
-    .values({
-      spender: event.args.spender,
-      owner: event.args.owner,
-      amount: event.args.amount,
-    })
-    .onConflictDoUpdate({ amount: event.args.amount });
+    .insert(account)
+    .values({ address: event.args.from, bfrAamount: 0n, esBFRAamount: 0n })
+    .onConflictDoUpdate((row) => ({
+      esBFRAamount: row.esBFRAamount - event.args.amount,
+    }));
 
-  // add row to "approval_event".
-  await context.db.insert(approvalEvent).values({
-    id: event.log.id,
-    amount: event.args.amount,
-    timestamp: Number(event.block.timestamp),
-    owner: event.args.owner,
-    spender: event.args.spender,
-  });
+  await context.db
+    .insert(account)
+    .values({ address: event.args.to, bfrAamount: 0n, esBFRAamount: 0n })
+    .onConflictDoUpdate((row) => ({
+      esBFRAamount: row.esBFRAamount + event.args.amount,
+    }));
+});
+ponder.on("Vester1:Deposit", async ({ event, context }) => {
+  await context.db
+    .insert(vesterList)
+    .values({ address: event.args.account, v1balance: 0n, v2balance: 0n })
+    .onConflictDoUpdate((row) => ({
+      v1balance: row.v1balance + event.args.amount,
+    }));
+});
+ponder.on("Vester1:Withdraw", async ({ event, context }) => {
+  await context.db
+    .insert(vesterList)
+    .values({ address: event.args.account, v1balance: 0n, v2balance: 0n })
+    .onConflictDoUpdate((row) => ({
+      v1balance: row.v1balance - event.args.balance,
+    }));
+});
+ponder.on("Vester1:Claim", async ({ event, context }) => {
+  await context.db
+    .insert(vesterList)
+    .values({ address: event.args.receiver, v1balance: 0n, v2balance: 0n })
+    .onConflictDoUpdate((row) => ({
+      v1balance: row.v1balance - event.args.amount,
+    }));
+});
+ponder.on("Vester2:Deposit", async ({ event, context }) => {
+  await context.db
+    .insert(vesterList)
+    .values({ address: event.args.account, v1balance: 0n, v2balance: 0n })
+    .onConflictDoUpdate((row) => ({
+      v2balance: row.v2balance + event.args.amount,
+    }));
+});
+ponder.on("Vester2:Withdraw", async ({ event, context }) => {
+  await context.db
+    .insert(vesterList)
+    .values({ address: event.args.account, v1balance: 0n, v2balance: 0n })
+    .onConflictDoUpdate((row) => ({
+      v2balance: row.v2balance - event.args.balance,
+    }));
+});
+ponder.on("Vester2:Claim", async ({ event, context }) => {
+  await context.db
+    .insert(vesterList)
+    .values({ address: event.args.receiver, v1balance: 0n, v2balance: 0n })
+    .onConflictDoUpdate((row) => ({
+      v2balance: row.v2balance - event.args.amount,
+    }));
 });
