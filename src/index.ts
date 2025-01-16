@@ -40,6 +40,7 @@ ponder.on("Vester1:Deposit", async ({ event, context }) => {
       v1balance: row.v1balance + event.args.amount,
     }));
 });
+// Deploy
 ponder.on("Vester1:Withdraw", async ({ event, context }) => {
   await context.db
     .insert(vesterList)
