@@ -39,12 +39,12 @@ export default createConfig({
       startBlock: 26783085,
       endBlock: 297628091,
     },
-    Camelot: {
-      network: "arbitrum",
-      abi: CamelotAbi,
-      address: "0x47ECF602a62BaF7d4e6b30FE3E8dD45BB8cfFadc",
-      startBlock: 26783085,
-      endBlock: 297628091,
-    },
+    // Camelot: {
+    //   network: "arbitrum",
+    //   abi: CamelotAbi,
+    //   address: "0x47ECF602a62BaF7d4e6b30FE3E8dD45BB8cfFadc",
+    //   startBlock: 26783085,
+    //   endBlock: 297628091,
+    // },
   },
 });
