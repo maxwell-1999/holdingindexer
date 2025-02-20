@@ -11,3 +11,6 @@ export const vesterList = onchainTable("vester", (t) => ({
   v1balance: t.bigint().notNull().default(0n),
   v2balance: t.bigint().notNull().default(0n),
 }));
+export const camelotHolders = onchainTable("vester", (t) => ({
+  address: t.hex().primaryKey(),
+}));

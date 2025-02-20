@@ -1,6 +1,6 @@
 import { createConfig } from "@ponder/core";
 import { http } from "viem";
-import { erc20ABI } from "./abis/erc20ABI";
+import { CamelotAbi, erc20ABI } from "./abis/erc20ABI";
 import { vesterAbi } from "./abis/ABI";
 
 export default createConfig({
@@ -36,6 +36,13 @@ export default createConfig({
       network: "arbitrum",
       abi: erc20ABI,
       address: "0x92914A456EbE5DB6A69905f029d6160CF51d3E6a",
+      startBlock: 26783085,
+      endBlock: 297628091,
+    },
+    Camelot: {
+      network: "arbitrum",
+      abi: CamelotAbi,
+      address: "0x47ECF602a62BaF7d4e6b30FE3E8dD45BB8cfFadc",
       startBlock: 26783085,
       endBlock: 297628091,
     },

@@ -1,4 +1,4 @@
-import { vesterList } from "./../ponder.schema";
+import { camelotHolders, vesterList } from "./../ponder.schema";
 import { ponder } from "@/generated";
 import { account } from "../ponder.schema";
 
@@ -80,4 +80,8 @@ ponder.on("Vester2:Claim", async ({ event, context }) => {
     .onConflictDoUpdate((row) => ({
       v2balance: row.v2balance - event.args.amount,
     }));
+});
+ponder.on("Camelot:Transfer", async ({ event, context }) => {
+  await context.db.insert(camelotHolders).values({ address: event.args.from });
+  await context.db.insert(camelotHolders).values({ address: event.args.to });
 });
