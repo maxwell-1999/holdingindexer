@@ -82,6 +82,16 @@ ponder.on("Vester2:Claim", async ({ event, context }) => {
     }));
 });
 ponder.on("Camelot:Transfer", async ({ event, context }) => {
-  await context.db.insert(camelotHolders).values({ address: event.args.from });
-  await context.db.insert(camelotHolders).values({ address: event.args.to });
+  await context.db
+    .insert(vesterList)
+    .values({ address: event.args.to, v1balance: 0n, v2balance: 0n })
+    .onConflictDoUpdate((row) => ({
+      v2balance: row.v2balance,
+    }));
+  await context.db
+    .insert(vesterList)
+    .values({ address: event.args.from, v1balance: 0n, v2balance: 0n })
+    .onConflictDoUpdate((row) => ({
+      v2balance: row.v2balance,
+    }));
 });
