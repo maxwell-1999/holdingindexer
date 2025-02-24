@@ -35,7 +35,11 @@ ponder.on("esBFR:Transfer", async ({ event, context }) => {
 ponder.on("Vester1:Deposit", async ({ event, context }) => {
   await context.db
     .insert(vesterList)
-    .values({ address: event.args.account, v1balance: 0n, v2balance: 0n })
+    .values({
+      address: event.args.account,
+      v1balance: event.args.amount,
+      v2balance: 0n,
+    })
     .onConflictDoUpdate((row) => ({
       v1balance: row.v1balance + event.args.amount,
     }));
@@ -60,7 +64,11 @@ ponder.on("Vester1:Claim", async ({ event, context }) => {
 ponder.on("Vester2:Deposit", async ({ event, context }) => {
   await context.db
     .insert(vesterList)
-    .values({ address: event.args.account, v1balance: 0n, v2balance: 0n })
+    .values({
+      address: event.args.account,
+      v1balance: 0n,
+      v2balance: event.args.amount,
+    })
     .onConflictDoUpdate((row) => ({
       v2balance: row.v2balance + event.args.amount,
     }));
